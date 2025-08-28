@@ -1,0 +1,18 @@
+{
+      "HardWorker": {
+        "name": "勤劳",
+        "type": "Personality",
+        "description": "天生就比别人更能忍受长时间的工作。",
+        "modifiers": [
+          { "target": "EnergyDecayRate", "operation": "multiply", "value": -0.1, "description": "勤劳使精力消耗减慢10%" }
+        ]
+      },
+      "Stubborn": {
+        "name": "固执",
+        "type": "Personality",
+        "description": "一旦下定决心，就很难被说服。",
+        "modifiers": [
+          { "target": "SocialInfluenceResistance", "operation": "add", "value": 20, "description": "固执性格增加20点说服抗性" }
+        ]
+    }
+}

@@ -1,0 +1,35 @@
+{
+"player_character": {
+    "name": "鲍勃",
+    "volume": 100,
+    "weight": 80,
+    "components": {
+      "TagComponent": { "tags": ["human", "sentient"] },
+      "CreatureComponent": {
+        "max_hp": 100,
+        "max_nutrition": 100,
+        "max_energy": 100,
+        "skills": {
+            "Crafting": 1,
+            "Medicine": 1,
+            "Farming": 1,
+            "Mining": 1,
+            "Woodworking": 1,
+            "Cooking": 1,
+            "Fishing": 1,
+            "Shooting": 1,
+            "Trading": 1
+                    }
+      },
+      "ConditionsComponent": {
+        "initial_traits": []
+      },
+      "EquipmentComponent": {},
+      "InventoryComponent": { "capacity_volume": 20 },
+      "TaskComponent": {},
+      "PerceptionComponent": {},
+      "AIControlComponent": {},
+      "DecisionArbiterComponent": {}
+    }
+  }
+}

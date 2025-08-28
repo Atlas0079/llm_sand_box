@@ -1,0 +1,59 @@
+{
+  "$schema": "./schemas/entity_schema.json",
+  "comment": "This file defines all base entity templates.",
+  
+  "apple": {
+    "name": "苹果",
+    "volume": 1,
+    "weight": 0.2,
+    "components": {
+      "TagComponent": {
+        "tags": ["food", "organic", "consumable"]
+      },
+      "ConsumableComponent": {
+        "nutrition_value": 20,
+        "status_to_apply": "Refreshed"
+      }
+    }
+  },
+
+  "iron_ingot": {
+    "name": "铁锭",
+    "volume": 5,
+    "weight": 10,
+    "components": {
+      "TagComponent": {
+        "tags": ["material", "metal", "crafting_ingredient"]
+      }
+    }
+  },
+
+  "iron_sword": {
+    "name": "铁剑",
+    "volume": 20,
+    "weight": 15,
+    "components": {
+      "TagComponent": {
+        "tags": ["weapon", "metal", "equippable", "can_be_strapped"]
+      },
+      "EquippableComponent": {
+        "slot_type": "main_hand",
+        "modifiers": [
+          { "target": "MeleeDamageBonus", "operation": "add", "value": 5 }
+        ]
+      }
+    }
+  },
+
+  "anvil": {
+    "name": "铁砧",
+    "volume": 120,
+    "weight": 500,
+    "components": {
+      "TagComponent": {
+        "tags": ["furniture", "crafting_station", "heavy_surface", "metal"]
+      },
+      "TaskComponent": {} 
+    }
+  }
+}
