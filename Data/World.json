@@ -1,0 +1,27 @@
+{
+    "meta": {
+        "version": "0.1.0",
+        "save_name": "New Game"
+    },
+    "world_state": {
+        "current_tick": 480
+    },
+    "locations": [
+        {
+            "location_id": "town_square",
+            "location_name": "Town Square",
+            "entities": [
+                {
+                    "instance_id": "beatrice_01",
+                    "template_id": "beatrice",
+                    "component_overrides": {}
+                },
+                {
+                    "instance_id": "apple_01",
+                    "template_id": "apple",
+                    "component_overrides": {}
+                }
+            ]
+        }
+    ]
+}

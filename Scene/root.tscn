@@ -1,5 +1,6 @@
-[gd_scene load_steps=9 format=3 uid="uid://d0avpu5wmgf1f"]
+[gd_scene load_steps=10 format=3 uid="uid://d0avpu5wmgf1f"]
 
+[ext_resource type="Script" path="res://Script/Main.gd" id="1_404cq"]
 [ext_resource type="Texture2D" uid="uid://7cn6ojicwip3" path="res://Asset/bg/upscale/203_day.png" id="1_duhet"]
 [ext_resource type="Texture2D" uid="uid://wsyfa0ese785" path="res://Asset/c1/1-normal.png" id="2_2s7li"]
 [ext_resource type="Texture2D" uid="uid://drc0808lkxgca" path="res://Asset/c5/c5-angry.png" id="3_e2ra5"]
@@ -12,6 +13,7 @@
 [node name="Root" type="Control"]
 layout_mode = 3
 anchors_preset = 0
+script = ExtResource("1_404cq")
 
 [node name="Background" type="Sprite2D" parent="."]
 position = Vector2(1280, 720)

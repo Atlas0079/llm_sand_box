@@ -1,0 +1,24 @@
+{
+    "eat_apple": {
+        "verb": "Consume",
+        "target_tags": ["edible", "apple"],
+        "inputs": {
+            "apple": 1
+        },
+        "process": {
+            "required_progress": 0
+        },
+        "outputs": [
+            {
+                "effect": "ConsumeInputs"
+            },
+            {
+                "effect": "ModifyProperty",
+                "target": "agent",
+                "component": "CreatureComponent",
+                "property": "current_nutrition",
+                "change": 20
+            }
+        ]
+    }
+} 

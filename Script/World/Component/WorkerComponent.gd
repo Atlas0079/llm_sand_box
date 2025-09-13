@@ -1,3 +1,19 @@
+# --- 职责说明 (WorkerComponent) ---
+# 组件定位：挂在“任务执行者”（如NPC）。负责领取任务、推进进度、触发完成。
+# 职责：
+# 1) 领取/释放：assign_task(task_id)、stop_task() 绑定/释放当前执行任务；
+# 2) 进度推进：update_per_tick 内根据规则累计 task.progress；
+# 3) 每tick副作用：通过 WorldExecutor.execute(...) 执行 tick_effects；
+# 4) 完成触发：当 task.is_complete()，发起 {"effect":"FinishTask"} 交给 WorldExecutor。
+# 读/写边界：
+# - 读侧：通过 WorldManager.get_task_by_id 解析 task_id，再经宿主 TaskComponent 获取任务对象；
+# - 写侧：任何跨实体或全局状态的修改（包含完成注销）必须经 WorldExecutor。
+# 协作：
+# - TaskComponent：宿主任务的提供者（可领取集合）；
+# - WorldManager：全局任务索引（需创建时注册，否则 Worker 无法推进）；
+# - WorldExecutor：tick效果与完成收尾的唯一执行者。
+# 失败与幂等建议：未 assign 直接早退；task 查不到则 stop_task 避免死循环；完成后应自停。
+# --------------------------------------------------------
 # res://Script/World/Component/WorkerComponent.gd
 extends Node
 class_name WorkerComponent
@@ -19,7 +35,7 @@ func has_task() -> bool:
 func update_per_tick(_ticks_passed: int):
 	if not has_task():
 		return
-
+	
 	# 1. 获取任务实例和它的配方
 	var agent = get_owner() as Entity
 	var task = _get_task_instance()
@@ -43,12 +59,12 @@ func update_per_tick(_ticks_passed: int):
 			# {"component": "CreatureComponent", "property": "strength", "multiplier": 0.2}
 		],
 		"tick_effects": [
-            
+			
 			# {"effect": "ModifyProperty", "target": "agent", "component": "SkillComponent", "property": "mining_experience", "change": 0.5}
 		],
 		"completion_effects": []
 	}
-
+	
 	# 2. 根据配方计算本轮tick的进度
 	var progress_this_tick = task_recipe.get("base_progress_per_tick", 1.0)
 	
@@ -58,7 +74,7 @@ func update_per_tick(_ticks_passed: int):
 		if is_instance_valid(component):
 			var prop_value = component.get(contributor.get("property", 0.0))
 			progress_this_tick += prop_value * contributor.get("multiplier", 1.0)
-
+	
 	# 3. 更新任务进度
 	task.progress += progress_this_tick
 	

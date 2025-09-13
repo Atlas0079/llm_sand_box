@@ -1,0 +1,27 @@
+{
+    "beatrice": {
+        "name": "Beatrice",
+        "components": {
+            "TagComponent": {
+                "tags": ["character", "agent"]
+            },
+            "CreatureComponent": {
+                "max_hp": 100,
+                "max_energy": 100,
+                "max_nutrition": 100
+            },
+            "AgentComponent": {
+                "agent_name": "Beatrice",
+                "personality_summary": "A curious explorer who is always looking for new adventures."
+            },
+            "EquipmentComponent": {},
+            "LLMControlComponent": {},
+            "DecisionArbiterComponent": {
+                "rules": [
+                    { "type": "Idle", "priority": 999 },
+                    { "type": "LowNutrition", "priority": 10, "threshold": 50 }
+                ]
+            }
+        }
+    }
+} 

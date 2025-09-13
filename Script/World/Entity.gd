@@ -4,6 +4,7 @@ class_name Entity
 
 # --- 核心属性 ---
 var entity_id: String
+var template_id: String # 新增：用于识别实体“类型”的ID
 var entity_name: String = "Unnamed Entity"
 
 var volume: float = 1.0   # 物体的"大小"，用于容器计算

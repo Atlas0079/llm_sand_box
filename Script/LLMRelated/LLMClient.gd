@@ -19,8 +19,7 @@ func _init():
 # ==============================================================================
 func request_blocking(prompt_messages: Array, model_name: String, temperature: float = 0.7) -> String:
     """
-    发送一个阻塞式的LLM请求，并返回文本结果。
-    整个游戏会在此等待直到收到响应。
+    发送一个LLM请求，并返回文本结果。
     """
     print("LLMClient: Sending request to model '", model_name, "'...")
     

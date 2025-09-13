@@ -22,6 +22,8 @@ LLMClient="*res://Script/LLMRelated/LLMClient.gd"
 DatabaseClient="*res://Script/LLMRelated/DatabaseClient.gd"
 WorldExecutor="*res://Script/WorldExecutor.gd"
 InteractionEngine="*res://Script/InteractionEngine.gd"
+WorldBuilder="*res://Script/WorldBuilder.gd"
+EntityFactory="*res://Script/World/EntityFactory.gd"
 
 [display]
 
@@ -29,7 +31,7 @@ window/size/viewport_width=2560
 window/size/viewport_height=1440
 window/size/window_width_override=1280
 window/size/window_height_override=720
-window/stretch/mode="viewport"
+window/stretch/mode="canvas_items"
 
 [rendering]
 

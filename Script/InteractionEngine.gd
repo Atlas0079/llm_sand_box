@@ -20,6 +20,8 @@ func process_command(agent: Entity, command_data: Dictionary) -> Dictionary:
     var verb = command_data.get("verb")
     var target_id = command_data.get("target_id")
     var target_entity = WorldManager.get_entity_by_id(target_id)
+    # 创建一个贯穿整个流程的上下文
+    var context = {"agent": agent, "target": target_entity}
 
     # 2. 找到匹配的配方
     var matched_recipe = _find_matching_recipe(verb, agent, target_entity, command_data.get("parameters", {}))
@@ -30,9 +32,10 @@ func process_command(agent: Entity, command_data: Dictionary) -> Dictionary:
         return {"status": "failed", "reason": "NO_RECIPE", "message": error_msg}
 
     print("InteractionEngine: Matched recipe '", matched_recipe.id, "'")
+    context["recipe"] = matched_recipe
 
     # 3. 验证并消耗输入 (材料等)
-    if not _check_and_consume_inputs(agent, matched_recipe.get("inputs", {})):
+    if not _check_and_consume_inputs(agent, matched_recipe.get("inputs", {}), context):
         var error_msg = "Agent does not have the required materials."
         print("InteractionEngine: ", error_msg)
         return {"status": "failed", "reason": "MISSING_INPUTS", "message": error_msg}
@@ -41,10 +44,10 @@ func process_command(agent: Entity, command_data: Dictionary) -> Dictionary:
     var process_data = matched_recipe.get("process", {})
     if process_data.get("required_progress", 0) == 0:
         # 瞬时交互
-        return _handle_instant_interaction(agent, target_entity, matched_recipe)
+        return _handle_instant_interaction(context)
     else:
         # 持续性交互 (创建Task)
-        return _handle_duration_interaction(agent, target_entity, matched_recipe)
+        return _handle_duration_interaction(context)
 
 
 func _find_matching_recipe(verb: String, agent: Entity, target: Entity, params: Dictionary) -> Dictionary:
@@ -81,45 +84,46 @@ func _find_matching_recipe(verb: String, agent: Entity, target: Entity, params: 
     return {} # 没找到
 
 #TODO：改为只检查输入，消耗物品由EffectExecutor处理
-func _check_and_consume_inputs(agent: Entity, inputs: Dictionary) -> bool:
+func _check_and_consume_inputs(agent: Entity, inputs: Dictionary, context: Dictionary) -> bool:
     if inputs.is_empty():
         return true # 不需要材料
 
-    var inventory = agent.get_component("InventoryComponent")
-    if not inventory:
-        return false # 没背包，肯定没材料
+    var equipment_comp = agent.get_component("EquipmentComponent")
+    if not equipment_comp:
+        print("InteractionEngine: Agent '", agent.entity_name, "' has no EquipmentComponent to find items in.")
+        return false 
 
-    # 步骤一：先检查，不消耗
-    for item_id in inputs:
-        var required_count = inputs[item_id]
-        if inventory.count_item(item_id) < required_count:
+    var required_entities = equipment_comp.find_item_entities_for_recipe(inputs)
+    
+    if required_entities.is_empty():
+        # find_item_entities_for_recipe 内部会打印找不到的错误信息
             return false # 材料不足
 
-    # 步骤二：检查通过，再消耗
-    for item_id in inputs:
-        var required_count = inputs[item_id]
-        inventory.remove_item(item_id, required_count)
-    
-    print("InteractionEngine: Consumed inputs for agent '", agent.entity_name, "'")
+    # 关键：将找到的实体列表存入上下文，供WorldExecutor后续消耗
+    context["entities_for_consumption"] = required_entities
     return true
 
 
-func _handle_instant_interaction(agent: Entity, target: Entity, recipe: Dictionary) -> Dictionary:
+func _handle_instant_interaction(context: Dictionary) -> Dictionary:
     print("InteractionEngine: Handling instant interaction.")
     
+    var recipe = context.get("recipe")
     var outputs = recipe.get("outputs", [])
     
     # 立即执行所有输出效果
     for effect_data in outputs:
-        # 构建上下文，让WorldExecutor知道谁是谁
-        var context = {"agent": agent, "target": target, "recipe": recipe}
+        # 直接传递已包含所有信息的context
         WorldExecutor.execute(effect_data, context)
         
     return {"status": "success", "type": "instant"}
 
 
-func _handle_duration_interaction(agent: Entity, target: Entity, recipe: Dictionary) -> Dictionary:
+func _handle_duration_interaction(context: Dictionary) -> Dictionary:
     print("InteractionEngine: Handling duration interaction by creating a task.")
+    
+    var agent = context.get("agent")
+    var target = context.get("target")
+    var recipe = context.get("recipe")
     
     var task_comp = target.get_component("TaskComponent")
     if not task_comp:
